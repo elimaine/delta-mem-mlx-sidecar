@@ -14,11 +14,7 @@ from pathlib import Path
 from typing import Any
 
 
-DEFAULT_ADAPTER_DIR = (
-    "/Users/elimaine/.cache/huggingface/hub/"
-    "models--declare-lab--delta-mem_qwen3_4b-instruct/"
-    "snapshots/c46dc31155608e412d44bf56638d5a6f856f2e7e"
-)
+DEFAULT_ADAPTER_DIR = os.getenv("DELTA_MEM_ADAPTER_DIR", "")
 
 
 @dataclass(frozen=True)
@@ -109,7 +105,11 @@ def main() -> int:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--model-path", default="mlx-community/Qwen3-4B-Instruct-2507-4bit")
-    parser.add_argument("--adapter-dir", default=DEFAULT_ADAPTER_DIR)
+    parser.add_argument(
+        "--adapter-dir",
+        default=DEFAULT_ADAPTER_DIR,
+        help="Path to a converted delta-Mem adapter directory. Defaults to DELTA_MEM_ADAPTER_DIR.",
+    )
     parser.add_argument("--plain-model-id", default="qwen3-4b-mlx")
     parser.add_argument("--delta-model-id", default="delta-mem-qwen3-4b-mlx")
     parser.add_argument("--max-tokens", type=int, default=48)
@@ -119,6 +119,11 @@ def main() -> int:
     parser.add_argument("--warmup", type=int, default=1, help="Unmeasured warmup requests per profile.")
     parser.add_argument("--output", type=Path, help="Optional JSON output path.")
     args = parser.parse_args()
+    if not args.adapter_dir:
+        raise SystemExit(
+            "--adapter-dir is required for the delta profile. Set DELTA_MEM_ADAPTER_DIR "
+            "or pass --adapter-dir /path/to/delta-mem_qwen3_4b-instruct."
+        )
 
     uvicorn = str(Path(args.uvicorn).expanduser().resolve())
     base_url = f"http://{args.host}:{args.port}"

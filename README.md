@@ -1,6 +1,6 @@
 # delta-mem-mlx-sidecar-w-openclaw
 
-OpenAI-compatible sidecar for running local MLX models behind OpenClaw, with an optional δ-mem adapter path for session-shaped memory.
+OpenAI-compatible sidecar for running local MLX models directly or behind OpenClaw, with an optional δ-mem adapter path for session-shaped memory.
 
 δ-mem augments a frozen transformer with a compact online memory state that reads and writes through attention. The paper reports an average 1.10x gain over the frozen backbone, 1.31x on MemoryAgentBench, and 1.20x on LoCoMo using a small online state rather than full fine-tuning or explicit context extension.
 
@@ -15,8 +15,8 @@ References:
 - Apple Silicon Mac for the default MLX path.
 - Python 3.11+.
 - Hugging Face access for the model downloads.
-- OpenClaw gateway if you want agent routing through this sidecar.
-- A stable `X-OpenClaw-Session-Key` per logical agent/session.
+- OpenClaw gateway only if you want agent routing through this sidecar.
+- A stable `X-OpenClaw-Session-Key` per logical agent/session when using memory state.
 
 ## Quick Start
 
@@ -57,6 +57,8 @@ curl -fsS http://127.0.0.1:8765/v1/chat/completions \
 
 ## OpenClaw
 
+OpenClaw is optional. The sidecar runs as a normal local HTTP service without it.
+
 Use `openclaw.example.json5` as the provider shape. The important parts are:
 
 - `baseUrl` points at this sidecar's `/v1` root.
@@ -65,7 +67,7 @@ Use `openclaw.example.json5` as the provider shape. The important parts are:
 
 When OpenClaw runs inside Lima, `host.lima.internal:8765` is the expected route back to the macOS sidecar. For host-only testing, use `127.0.0.1:8765`.
 
-The `openclaw-plugin/` directory contains the live gateway's embedded harness plugin export. It is included as a reference/plugin starting point for OpenClaw runtimes that need a custom harness instead of only a model provider.
+Most users can skip an OpenClaw plugin and configure this as a model provider only. If you need a custom embedded harness, see `wiki/OpenClaw-Plugin.md` for the optional plugin reference.
 
 ## Released δ-mem Adapter
 
@@ -77,6 +79,18 @@ hf download declare-lab/delta-mem_qwen3_4b-instruct
 ```
 
 See `delta-mem-sidecar/README.md` for the exact optional adapter run command.
+
+## Hugging Face Adapter Artifacts
+
+Upstream Torch adapter:
+
+- https://huggingface.co/declare-lab/delta-mem_qwen3_4b-instruct
+
+Planned MLX-converted adapter artifact:
+
+- TODO: add Hugging Face repo link after publishing `delta_mem_adapter_mlx.npz`.
+
+The converted MLX artifact should be published as a small adapter repo, not as merged model weights.
 
 ## Verification
 
@@ -96,6 +110,7 @@ python benchmarks/openclaw_memory_eval.py \
 For the released Qwen3 adapter path, use:
 
 ```sh
+export DELTA_MEM_ADAPTER_DIR=/path/to/declare-lab/delta-mem_qwen3_4b-instruct
 python benchmarks/full_delta_mem_bench.py \
   --max-tokens 32 \
   --warmup 1
@@ -105,6 +120,5 @@ python benchmarks/full_delta_mem_bench.py \
 
 - `delta-mem-sidecar/`: FastAPI sidecar and runtime implementations.
 - `benchmarks/`: OpenClaw and paper-style verification probes.
-- `openclaw-plugin/`: live gateway embedded harness plugin export.
 - `wiki/`: concise project wiki for users and operators.
 - `openclaw.example.json5`: OpenClaw provider snippet.

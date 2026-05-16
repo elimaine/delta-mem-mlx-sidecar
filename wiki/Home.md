@@ -1,6 +1,6 @@
 # Delta-Mem MLX Sidecar With OpenClaw
 
-This project runs a local MLX model behind an OpenAI-compatible sidecar so OpenClaw can route agent traffic through it. The optional δ-mem path adds a compact online memory state coupled to attention, so a stable session key can shape future responses without replaying all prior context.
+This project runs a local MLX model behind an OpenAI-compatible sidecar. It can run directly through HTTP or be routed through OpenClaw. The optional δ-mem path adds a compact online memory state coupled to attention, so a stable session key can shape future responses without replaying all prior context.
 
 Why it is good: the δ-mem paper reports that a tiny online state improved average score to 1.10x over the frozen backbone, with larger gains on memory-heavy tasks: 1.31x on MemoryAgentBench and 1.20x on LoCoMo. The public adapter is released for Qwen3-4B, and this repo keeps the default run small with a toy MLX model while leaving the adapter path available.
 
@@ -16,7 +16,7 @@ References:
 - Install Python 3.11+.
 - Install sidecar dependencies with `pip install -e ".[mlx,test]"`.
 - Start the sidecar on port `8765`.
-- Configure OpenClaw to use the sidecar as an OpenAI-compatible chat-completions provider.
+- Configure OpenClaw only if agent routing is desired.
 - Preserve a stable `X-OpenClaw-Session-Key` per agent/session.
 - Treat exact hidden-fact recall as non-guaranteed; the target signal is measurable attention-shaped continuity.
 
@@ -33,6 +33,8 @@ DELTA_MEM_MODEL_ID=qwen2.5-0.5b-mlx-test
 This validates OpenClaw routing, local MLX inference, request shape, state-key handling, and benchmark plumbing without requiring a large model.
 
 ## OpenClaw Setup
+
+OpenClaw is optional. Skip this section if you only want the local sidecar API.
 
 Use `openclaw.example.json5` as the provider snippet. The important transport setting is:
 
@@ -62,6 +64,16 @@ declare-lab/delta-mem_qwen3_4b-instruct
 ```
 
 Download the model and adapter, convert the adapter checkpoint once, then set `DELTA_MEM_ADAPTER_DIR` when starting the sidecar.
+
+## Hugging Face Adapter Artifacts
+
+Upstream adapter:
+
+- https://huggingface.co/declare-lab/delta-mem_qwen3_4b-instruct
+
+MLX-converted adapter:
+
+- TODO: add Hugging Face repo link after publishing `delta_mem_adapter_mlx.npz`.
 
 ## Verification
 
