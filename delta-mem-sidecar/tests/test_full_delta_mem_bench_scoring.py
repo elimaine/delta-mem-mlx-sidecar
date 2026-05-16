@@ -21,16 +21,16 @@ def test_key_term_recall_scores_partial_and_complete_matches() -> None:
 
 
 def test_token_f1_rewards_reference_overlap() -> None:
-    score = token_f1("The answer is Delta Pike.", "Delta Pike")
+    score = token_f1("The answer is Delta Northstar.", "Delta Northstar")
 
     assert 0 < score < 1
 
 
 def test_score_answer_uses_best_available_metric() -> None:
     score = score_answer(
-        "The current project codename is Delta Pike.",
-        references=["Delta Pike"],
-        key_terms=["delta", "pike"],
+        "The current project codename is Delta Northstar.",
+        references=["Delta Northstar"],
+        key_terms=["delta", "northstar"],
     )
 
     assert score["score"] == 1.0

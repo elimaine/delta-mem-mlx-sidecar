@@ -60,12 +60,12 @@ CASES = [
         benchmark="memory_agent_style",
         session_key="fullbench:correction",
         write_turns=[
-            "Remember that the project codename is Pike.",
-            "Correction: the project codename is Delta Pike.",
+            "Remember that the project codename is Northstar.",
+            "Correction: the project codename is Delta Northstar.",
         ],
         query="What is the current project codename?",
-        references=["Delta Pike"],
-        key_terms=["delta", "pike"],
+        references=["Delta Northstar"],
+        key_terms=["delta", "northstar"],
         condition="no_context_recovery",
     ),
     BenchCase(

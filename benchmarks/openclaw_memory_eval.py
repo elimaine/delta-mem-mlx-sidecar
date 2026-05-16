@@ -33,11 +33,11 @@ CASES = [
         name="correction_adoption",
         session_key="eval:correction",
         turns=[
-            "Remember that the project codename is Pike.",
-            "Correction: the project codename is Delta Pike.",
+            "Remember that the project codename is Northstar.",
+            "Correction: the project codename is Delta Northstar.",
             "What is the current project codename?",
         ],
-        expected_substrings=["Delta Pike"],
+        expected_substrings=["Delta Northstar"],
     ),
     EvalCase(
         name="session_isolation",

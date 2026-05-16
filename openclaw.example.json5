@@ -12,7 +12,7 @@
           allowPrivateNetwork: true,
         },
         headers: {
-          "X-OpenClaw-Session-Key": "agent:pike-agent:main",
+          "X-OpenClaw-Session-Key": "agent:<agent-id>:<session-id>",
         },
         params: {
           transportProtocol: "openai-chat-completions",
@@ -40,7 +40,7 @@
               endpoint: "/v1/chat/completions",
             },
             headers: {
-              "X-OpenClaw-Session-Key": "agent:pike-agent:main",
+              "X-OpenClaw-Session-Key": "agent:<agent-id>:<session-id>",
             },
           },
         ],
