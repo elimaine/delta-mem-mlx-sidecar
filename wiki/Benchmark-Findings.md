@@ -12,7 +12,7 @@ That alone is reason to be excited about this.
 
 Preloading memory into the weights has proven difficult to pin down. Possibly because of the small model size. I am currently exploring this; see the benchmark details below.
 
-The important caveat is that context volume by itself was not predictive. Compact, relevant QMD context worked better than larger, richer wiki/ygraph context. That suggests the current bottleneck may be retrieval quality, fact density, and wording shape rather than simply adding more memory.
+The important caveat is that context volume by itself was not predictive. Compact, relevant QMD context worked better than larger, richer wiki/ygraph (ygraph is something i made, not released yet) context. That suggests the current bottleneck may be retrieval quality, fact density, and wording shape rather than simply adding more memory.
 
 ## Most Interesting Results
 
