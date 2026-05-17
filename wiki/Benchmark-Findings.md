@@ -6,7 +6,7 @@ Public repo: https://github.com/elimaine/delta-mem-mlx-sidecar-w-openclaw
 
 ## Shareable Summary
 
-The base model consistently performed better in the strongest local comparisons with the δ-mem TSW adapter attached. The most interesting runs ranged from about `1.07x` to `1.30x` score lift, at the cost of about `1.26x` to `1.69x` probe-latency slowdown.
+The base model consistently performed better in the strongest local comparisons with the δ-mem TSW adapter attached. The most interesting runs ranged from about `1.07x` to `1.30x` score lift (score here is based on correct answers), at the cost of about `1.26x` to `1.69x` probe-latency slowdown.
 
 That alone is reason to be excited about this.
 
