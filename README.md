@@ -65,7 +65,7 @@ Use `openclaw.example.json5` as the provider shape. The important parts are:
 - `transportProtocol` is `openai-chat-completions`.
 - `X-OpenClaw-Session-Key` is present and stable for a logical session.
 
-When OpenClaw runs inside Lima, `host.lima.internal:8765` is the expected route back to the macOS sidecar. For host-only testing, use `127.0.0.1:8765`.
+The default example assumes OpenClaw and the sidecar run on the same machine, so the provider URL is `http://127.0.0.1:8765/v1`.
 
 Most users can skip an OpenClaw plugin and configure this as a model provider only. If you need a custom embedded harness, see `wiki/OpenClaw-Plugin.md` for the optional plugin reference.
 

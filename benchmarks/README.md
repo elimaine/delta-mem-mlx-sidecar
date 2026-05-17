@@ -177,12 +177,11 @@ Use `openclaw_transcript_toolbelt.py` for larger local replay batches without
 hammering model servers. It keeps calls single-threaded, writes rich JSON/JSONL
 artifacts, and emits SVG graph summaries.
 
-Example for a local Lima OpenClaw instance:
+Example for a same-machine OpenClaw session directory:
 
 ```sh
-python benchmarks/openclaw_transcript_toolbelt.py export-lima \
-  --instance <lima-instance> \
-  --remote-root <remote-openclaw-agents-dir> \
+python benchmarks/openclaw_transcript_toolbelt.py export-local \
+  --sessions-root <openclaw-agents-dir> \
   --output-dir benchmarks/results/openclaw-16/raw \
   --limit 16
 

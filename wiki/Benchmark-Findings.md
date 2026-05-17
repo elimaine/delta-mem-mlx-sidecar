@@ -63,7 +63,7 @@ Use this section when comparing results. The paper rows and local LoCoMo rows ar
 | Fixed local LoCoMo-10 | No | Direct local LoCoMo-style sample | Corrected local scorer | `1.07x` score lift |
 | Sanitized OpenClaw raw replay | Yes | Sanitized OpenClaw-shaped session replay | Older lenient scorer | `1.17x` score lift |
 | OpenClaw context-injection variants | Yes | QMD/ygraph/memorg context plus target replay | Older lenient scorer | Up to `1.30x` score lift |
-| OpenClaw-16 sanitized transcript replay | Yes | 16 live OpenClaw transcripts exported from Lima and sanitized | Current strict scorer | `+0.0391` absolute score delta |
+| OpenClaw-16 sanitized transcript replay | Yes | 16 live OpenClaw transcripts exported from local session files and sanitized | Current strict scorer | `+0.0391` absolute score delta |
 
 ## Most Interesting Results
 
@@ -86,7 +86,7 @@ The δ-mem paper reports meaningful gains using Qwen3-4B-Instruct: `1.10x` avera
 
 ## OpenClaw 16 Transcript Replay
 
-Run date: 2026-05-16. Source: live OpenClaw session files exported from a local Lima VM, then sanitized locally. Very large sessions were excluded with a 3 MB cap. The run used 16 sanitized transcripts, 8 deterministic probes per transcript, and a no-history base case for each transcript. Calls were single-threaded against the local `delta-mem-qwen3-4b-mlx` sidecar.
+Run date: 2026-05-16. Source: live OpenClaw session files exported from local session files, then sanitized locally. Very large sessions were excluded with a 3 MB cap. The run used 16 sanitized transcripts, 8 deterministic probes per transcript, and a no-history base case for each transcript. Calls were single-threaded against the local `delta-mem-qwen3-4b-mlx` sidecar.
 
 | Metric | No-history base | Replayed history |
 | --- | ---: | ---: |

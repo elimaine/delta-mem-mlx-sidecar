@@ -42,13 +42,7 @@ Use `openclaw.example.json5` as the provider snippet. The important transport se
 transportProtocol: "openai-chat-completions"
 ```
 
-For OpenClaw inside Lima, point the provider at:
-
-```text
-http://host.lima.internal:8765/v1
-```
-
-For host-only testing:
+When OpenClaw and the sidecar run on the same machine, point the provider at:
 
 ```text
 http://127.0.0.1:8765/v1

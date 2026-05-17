@@ -6,7 +6,6 @@ import json
 import math
 import re
 import statistics
-import subprocess
 import sys
 import textwrap
 import time
@@ -67,13 +66,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Toolbelt for sanitized OpenClaw transcript replay benchmarks.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    export_lima = subparsers.add_parser("export-lima", help="Copy session JSONL files from a Lima OpenClaw VM.")
-    export_lima.add_argument("--instance", required=True, help="Lima instance name.")
-    export_lima.add_argument("--remote-root", required=True, help="Remote OpenClaw agents directory.")
-    export_lima.add_argument("--remote-path-pattern", default="*/sessions/*.jsonl")
-    export_lima.add_argument("--output-dir", type=Path, required=True)
-    export_lima.add_argument("--limit", type=int, default=16)
-    export_lima.add_argument("--max-bytes", type=int, default=3_000_000)
+    export_local = subparsers.add_parser("export-local", help="Copy session JSONL files from a local OpenClaw agents directory.")
+    export_local.add_argument("--sessions-root", type=Path, required=True, help="Local OpenClaw agents directory.")
+    export_local.add_argument("--path-pattern", default="*/sessions/*.jsonl")
+    export_local.add_argument("--output-dir", type=Path, required=True)
+    export_local.add_argument("--limit", type=int, default=16)
+    export_local.add_argument("--max-bytes", type=int, default=3_000_000)
 
     sanitize = subparsers.add_parser("sanitize", help="Sanitize local JSONL transcript files.")
     sanitize.add_argument("sources", nargs="+", type=Path)
@@ -105,8 +103,8 @@ def main() -> int:
     report.add_argument("--output-dir", type=Path, required=True)
 
     args = parser.parse_args()
-    if args.command == "export-lima":
-        return export_lima_sessions(args)
+    if args.command == "export-local":
+        return export_local_sessions(args)
     if args.command == "sanitize":
         return sanitize_command(args)
     if args.command == "probes":
@@ -118,42 +116,19 @@ def main() -> int:
     raise AssertionError(args.command)
 
 
-def export_lima_sessions(args: argparse.Namespace) -> int:
+def export_local_sessions(args: argparse.Namespace) -> int:
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    listing = subprocess.check_output(
-        [
-            "limactl",
-            "shell",
-            args.instance,
-            "--",
-            "bash",
-            "-lc",
-            (
-                "sudo find "
-                + sh_quote(args.remote_root)
-                + " -path "
-                + sh_quote("*/" + args.remote_path_pattern)
-                + " -type f"
-                + " -size -"
-                + str(args.max_bytes)
-                + "c | sort | head -"
-                + str(args.limit)
-            ),
-        ],
-        text=True,
-    )
-    paths = [line.strip() for line in listing.splitlines() if line.strip()]
+    paths = [
+        path
+        for path in sorted(args.sessions_root.glob(args.path_pattern))
+        if path.is_file() and path.stat().st_size <= args.max_bytes
+    ][: args.limit]
     manifest = []
-    for index, remote_path in enumerate(paths, start=1):
-        local_name = f"lima-session-{index:02d}-{Path(remote_path).name}"
+    for index, source_path in enumerate(paths, start=1):
+        local_name = f"session-{index:02d}-{source_path.name}"
         local_path = args.output_dir / local_name
-        with local_path.open("wb") as handle:
-            subprocess.run(
-                ["limactl", "shell", args.instance, "--", "sudo", "cat", remote_path],
-                check=True,
-                stdout=handle,
-            )
-        manifest.append({"remote_path": remote_path, "local_path": str(local_path), "bytes": local_path.stat().st_size})
+        local_path.write_bytes(source_path.read_bytes())
+        manifest.append({"source_path": str(source_path), "local_path": str(local_path), "bytes": local_path.stat().st_size})
     (args.output_dir / "export-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"exported": len(manifest), "output_dir": str(args.output_dir)}, indent=2))
     return 0
@@ -670,10 +645,6 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
         if line:
             records.append(json.loads(line))
     return records
-
-
-def sh_quote(value: str) -> str:
-    return "'" + value.replace("'", "'\\''") + "'"
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@
   models: {
     providers: {
       "delta-mem-mlx": {
-        baseUrl: "http://host.lima.internal:8765/v1",
+        baseUrl: "http://127.0.0.1:8765/v1",
         apiKey: "local",
         auth: "api-key",
         api: "openai-completions",
