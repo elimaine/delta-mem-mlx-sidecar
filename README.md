@@ -11,6 +11,28 @@ generic header:
 X-Delta-Mem-Session-Key: <stable logical session key>
 ```
 
+## Where this stands (November 2026)
+
+A research workspace frozen in May 2026, not maintained. The sidecar runs
+and the benchmarks ran, but they were small local runs, not paper-grade:
+flat on paper-style probes, about 1.07x on a local LoCoMo slice, and up to
+1.3x only on short retrieved-snippet preloads in small fixtures
+(`wiki/Benchmark-Findings.md`). The MLX and OpenClaw APIs it targets have
+moved. Use it as a starting point for an OpenAI-compatible MLX sidecar
+that injects hidden state, not as a dependency.
+
+Better options today:
+
+- Serving MLX models behind an OpenAI-compatible API: mlx-lm's built-in
+  `mlx_lm.server`, https://github.com/ml-explore/mlx-lm;
+  mlx-openai-server, https://github.com/cubist38/mlx-openai-server, for
+  multimodal; oMLX, https://omlx.ai; LM Studio; or Ollama's MLX backend.
+- Memory for OpenClaw agents: the built-in Markdown memory,
+  https://docs.openclaw.ai/concepts/memory, or the Mem0 plugin,
+  https://github.com/mem0ai/mem0.
+- δ-mem itself: the paper, https://arxiv.org/abs/2605.12357, and the
+  released adapter.
+
 ## Quick Start
 
 ```sh
