@@ -11,27 +11,35 @@ generic header:
 X-Delta-Mem-Session-Key: <stable logical session key>
 ```
 
-## Where this stands (November 2026)
+## Status (November 2026)
 
-A research workspace frozen in May 2026, not maintained. The sidecar runs
-and the benchmarks ran, but they were small local runs, not paper-grade:
-flat on paper-style probes, about 1.07x on a local LoCoMo slice, and up to
-1.3x only on short retrieved-snippet preloads in small fixtures
-(`wiki/Benchmark-Findings.md`). The MLX and OpenClaw APIs it targets have
-moved. Use it as a starting point for an OpenAI-compatible MLX sidecar
-that injects hidden state, not as a dependency.
+delta-mem-mlx-sidecar is an OpenAI-compatible chat-completions server for
+Apple Silicon that runs MLX models and can preload hidden memory state
+(`attention_state`) before generation, with a benchmark toolbelt for
+session-memory probes and sanitized transcript replay. It ran the δ-mem
+adapter against a frozen Qwen3-4B backbone and measured what different
+memory preloads did.
 
-Better options today:
+The results, honestly: small local runs, not paper-grade. Flat on
+paper-style synthetic probes, about 1.07x on a local LoCoMo slice, and up
+to 1.3x when the preload was short retrieved snippets
+(`wiki/Benchmark-Findings.md`). The clearest finding is that the relevance
+and fact density of a preload matter more than its size.
 
-- Serving MLX models behind an OpenAI-compatible API: mlx-lm's built-in
-  `mlx_lm.server`, https://github.com/ml-explore/mlx-lm;
-  mlx-openai-server, https://github.com/cubist38/mlx-openai-server, for
-  multimodal; oMLX, https://omlx.ai; LM Studio; or Ollama's MLX backend.
-- Memory for OpenClaw agents: the built-in Markdown memory,
-  https://docs.openclaw.ai/concepts/memory, or the Mem0 plugin,
-  https://github.com/mem0ai/mem0.
-- δ-mem itself: the paper, https://arxiv.org/abs/2605.12357, and the
-  released adapter.
+Know before you build on it: active work paused in May 2026. MLX, mlx-lm
+and OpenClaw have all moved since, so expect breakage at the model-loading
+and OpenClaw-facing seams. The FastAPI surface and the benchmark scripts
+are self-contained.
+
+Issues and pull requests are welcome; replies may be slow.
+
+Related: for serving MLX models behind an OpenAI-compatible API, mlx-lm's
+`mlx_lm.server`, https://github.com/ml-explore/mlx-lm; mlx-openai-server,
+https://github.com/cubist38/mlx-openai-server; oMLX, https://omlx.ai;
+LM Studio; Ollama's MLX backend. For agent memory in OpenClaw, the
+built-in Markdown memory, https://docs.openclaw.ai/concepts/memory, and
+the Mem0 plugin, https://github.com/mem0ai/mem0. For the method, the
+δ-mem paper, https://arxiv.org/abs/2605.12357.
 
 ## Quick Start
 
